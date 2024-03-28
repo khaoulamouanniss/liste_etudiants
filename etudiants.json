@@ -9,36 +9,36 @@
     "id_etudiant": "01",
     "nom": "Jean",
     "session": "1",
-    "cours": ["Prog1"]
+    "cours": ["Introduction à la programmation"]
   },
   {
     "id_etudiant": "02",
     "nom": "Alice",
     "session": "2",
-    "cours": ["Prog2"]
+    "cours": ["Introduction aux bases de données", "Conception Web"]
   },
   {
     "id_etudiant": "03",
     "nom": "Marc",
     "session": "2",
-    "cours": ["Algèbre", "Statistiques"]
+    "cours": ["Programmation Mobile", "Programmation Web"]
   },
   {
     "id_etudiant": "04",
     "nom": "Sophie",
     "session": "1",
-    "cours": ["Histoire de l'art", "Design"]
+    "cours": ["Programmation Web", "Algorithmique"]
   },
   {
     "id_etudiant": "05",
     "nom": "Lucas",
     "session": "3",
-    "cours": ["Chimie", "Biologie"]
+    "cours": ["Introduction à la programmation"]
   },
   {
     "id_etudiant": "06",
     "nom": "Emma",
     "session": "3",
-    "cours": ["Physique", "Prog3"]
+    "cours": ["Algorithmique", "Conception Web"]
   }
 ]
