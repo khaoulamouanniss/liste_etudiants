@@ -1,19 +1,13 @@
 [
   {
-    "id_etudiant": "00",
-    "nom": "Aucun étudiant sélectionné",
-    "session": "1",
-    "cours": []
-  },
-  {
     "id_etudiant": "01",
-    "nom": "Jean",
+    "nom": "Yahya",
     "session": "1",
     "cours": ["Introduction à la programmation"]
   },
   {
     "id_etudiant": "02",
-    "nom": "Alice",
+    "nom": "Iyad",
     "session": "2",
     "cours": ["Introduction aux bases de données", "Conception Web"]
   },
@@ -25,13 +19,13 @@
   },
   {
     "id_etudiant": "04",
-    "nom": "Sophie",
+    "nom": "Amal",
     "session": "1",
     "cours": ["Programmation Web", "Algorithmique"]
   },
   {
     "id_etudiant": "05",
-    "nom": "Lucas",
+    "nom": "Layan",
     "session": "3",
     "cours": ["Introduction à la programmation"]
   },

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, Modal, FlatList, StyleSheet, Alert } from 'react-native';
+import {View, Text, Modal, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import {I18n} from 'i18n-js';
+import * as Localization from 'expo-localization';
+import trad from './js/traduction';
 import EntreeTexte from './composants/EntreeTexte';
 import Selecteur from './composants/Selecteur';
 import Bouton from './composants/Bouton';
 import Titre from './composants/Titre';
-import coursDisponibles from './data/cours';  
-import sessions from './data/sessions'; 
+import coursDisponibles from './js/cours';  
+import sessions from './js/sessions'; 
 
 export default function App() {
   const [etudiants, setEtudiants] = useState([]);
@@ -14,9 +17,17 @@ export default function App() {
   const [sessionSelectionnee, setSessionSelectionnee] = useState('');
   const [coursSelectionne, setCoursSelectionne] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [erreur, setErreur] = useState('');
-  const [confirmation, setConfirmation] = useState('');
-  
+  const [erreur, setErreur] = useState({erreur1:'',erreur2:'',erreur3:''});
+  const [langue, setLangue] = useState(Localization.getLocales()[0].languageCode);
+  const [afficherOptionsLangue, setAfficherOptionsLangue] = useState(false);
+  const optionsLangue = [
+    { label: 'Arabe', value: 'ar' },
+    { label: 'Français', value: 'fr' },
+    { label: 'English', value: 'en' },
+    
+  ];
+  const traduire = new I18n(trad); 
+  traduire.locale = langue;  
 
   useEffect(() => {
 
@@ -26,7 +37,7 @@ export default function App() {
               setEtudiants(data);
             })
             .catch(error => {
-                setErreur("Erreur lors du chargement des étudiants.");
+                setErreur({erreur1:"Erreur lors du chargement des étudiants."});
                 console.error(error);
             });
     }
@@ -49,11 +60,11 @@ export default function App() {
   const verifierEtudiantExiste = (id) => {
     const etudiant = etudiants.find((etudiant) => etudiant.id_etudiant === id);
     if (!etudiant) {
-      setErreur("ID étudiant inexistant!");
+      setErreur({erreur1:"ID étudiant inexistant!"});
       return null;    
     } else {
-      setErreur(`Étudiant : ${etudiant.nom}`); // Affiche le nom de l'étudiant
-      setConfirmation("Veuillez confirmer votre sélection");
+      setErreur({erreur1:`Étudiant : ${etudiant.nom}`}); // Affiche le nom de l'étudiant
+      setErreur({erreur2:"Veuillez confirmer votre sélection"});
       return etudiant;
     }
   };
@@ -61,28 +72,28 @@ export default function App() {
   const handleSelectionnerEtudiant = (id) => {
     const etudiant = verifierEtudiantExiste(id);
     if (etudiant == null) {
-      setErreur("");
+      setErreur({erreur1:''});
       setEtudiantSelectionne(null);
       //setConfirmation("Veuillez confirmer votre sélection");
     } else {
       setEtudiantSelectionne(etudiant);
       console.log(etudiantSelectionne);
-      setErreur("");
-      setConfirmation("Étudiant sélectionné");
+      setErreur({erreur1:''});
+      setErreur({erreur1:"Étudiant sélectionné"});
       
     }
   };
   const handleEnregistrerCours = () => {
     if (!coursSelectionne) {
-      setErreur("Aucun cours sélectionné");
+      setErreur({erreur3:"Aucun cours sélectionné"});
       return;
     }
     if (etudiantSelectionne.cours.includes(coursSelectionne)) {
-      setErreur("L'élève est déjà inscrit à ce cours");
+      setErreur({erreur3:"L'étudiant est déjà inscrit à ce cours"});
       return;
     }
     if (etudiantSelectionne.cours.length >= 5) {
-      setErreur("Un élève ne peut pas être inscrit à plus de 5 cours");
+      setErreur({erreur3:"Un étudiant ne peut pas être inscrit à plus de 5 cours"});
       return;
     }
     const nouvelEtudiant = {
@@ -94,17 +105,47 @@ export default function App() {
     setEtudiants(etudiants.map((etudiant) => etudiant.id_etudiant === etudiantSelectionne.id_etudiant ? nouvelEtudiant : etudiant));
     setEtudiantSelectionne(nouvelEtudiant);
     setCoursSelectionne('');
-    setErreur('');
+    setErreur({erreur3:''});
   };
   
 
-  const renderItem = ({ item }) => (
-    <Text style={styles.itemList}>{item}</Text>
-  );
+  const changerLangue = (langueSelectionnee) => {
+    console.log("Changement de langue vers :", langueSelectionnee);      setLangue(langueSelectionnee);
+    setAfficherOptionsLangue(false); 
+  };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => console.log('Test onPress')}>
+  <Text>Test Click</Text>
+</TouchableOpacity>
       <Titre>INSCRIPTION AUX COURS</Titre>
+
+      <TouchableOpacity onPress={() => setAfficherOptionsLangue(!afficherOptionsLangue)} style={{ position: 'absolute', top: 80, right: 20 }}>
+  <Text>{langue.toUpperCase()}</Text>
+</TouchableOpacity>
+
+{afficherOptionsLangue && (
+  console.log('Rendu des options de langue'),
+  <View style={styles.optionsLangueContainer}>
+    {optionsLangue.map((option) => (
+      <TouchableOpacity
+        key={option.value}
+        style={styles.optionLangue}
+        onPress={() => {
+          changerLangue(option.value); 
+        }}
+      >
+        <Text style={styles.textOptionLangue}>{option.value.toUpperCase()}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+)}
+
+      <View style={styles.section}>
+      
+
+</View>
 
       <View style={styles.section}>
         <EntreeTexte
@@ -115,10 +156,10 @@ export default function App() {
             verifierEtudiantExiste(text);
           }}
         />
-        <Text style={styles.messageErreur}>{erreur}</Text>
+        <Text style={styles.messageErreur}>{erreur.erreur1}</Text>
         <Bouton title="Sélectionner un étudiant" onPress={()=>handleSelectionnerEtudiant(etudiantId)}/>
   
-  <Text style={styles.confirmation}>{confirmation}</Text>
+  <Text style={styles.confirmation}>{erreur.erreur2}</Text>
       </View>
 
       {etudiantSelectionne && (
@@ -134,7 +175,7 @@ export default function App() {
       onValueChange={setCoursSelectionne}
       items={coursDisponibles}
     />
-              {erreur && <Text style={styles.messageErreur}>{erreur}</Text>}
+              {erreur && <Text style={styles.messageErreur}>{erreur.erreur3}</Text>}
               </View>
               <View style={styles.boutonContainer}>
         <Bouton title="Enregistrer" onPress={handleEnregistrerCours} />
@@ -244,5 +285,26 @@ confirmation: {
   color: 'black', // Texte en noir pour la confirmation
   // Ajoutez d'autres styles si nécessaire
 },
-// Ajoutez d'autres styles personnalisés si nécessaire
+optionsLangueContainer: {
+  position: 'absolute',
+  top: 100, 
+  right: 10,
+  backgroundColor: 'white',
+  borderRadius: 6,
+  padding: 3,
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 5,
+},
+optionLangue: {
+  padding: 5,
+},
+textOptionLangue: {
+  textAlign: 'center',
+},
 });
